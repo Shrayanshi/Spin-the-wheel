@@ -1,0 +1,131 @@
+<!--
+    Winhweel.js responsive wheel example by Douglas McKechie @ www.dougtesting.net
+    See website for tutorials and other documentation.
+
+    The MIT License (MIT)
+
+    Copyright (c) 2019 Douglas McKechie
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+-->
+<doctype html>
+<html>
+    <head>
+        <title>Spin to win</title>
+        <!-- @TODO make the font-size for the text on the page responsive too -->
+        <link rel="stylesheet" href="main.css" type="text/css" />
+        <script type="text/javascript" src="../../Winwheel.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+    </head>
+    <body>
+        <div class="popup" id="popup-1">
+            <div class="overlay"></div>
+            <div class="content">
+              <div class="close-btn" onclick="togglePopup()">&times;</div>
+              <h1>Congratulations!</h1>
+              <p>You have won <span id="name"></span></p>
+              <p>Come back again!</p>
+            </div>
+          </div>
+        <div align="center">
+            <img class = "spin1" src="spin_on.png"/> <h1>To Win</h1>
+            <br />
+            <p>This is a responsive wheel</p>
+            <br />
+            <img id="spin_button" src="ph.crdownload" alt="Spin"/>
+            <br />
+            <button id="btn" onclick="startShow()">Click here to see the Wheeeel </button>
+            <!-- Always set canvas to largest desired size, i.e. desktop PC size, it will be scaled down for smaller devices but never scaled up -->
+            <canvas id="canvas" width="500" height="500" style="visibility: hidden;" data-responsiveMinWidth="180" data-responsiveScaleHeight="true" onClick="startSpin();">
+                <p style="{color: white}" align="center">Sorry, your browser doesn't support canvas. Please try another.</p>
+            </canvas>
+            <br /><br />
+            <p align="center">Tap the wheel to spin</p>
+        </div>
+        <script>
+            // Create winwheel as per normal.
+            let theWheel = new Winwheel({
+                'numSegments'  : 8,     // Specify number of segments.
+                'textFontSize' : 28,    // Set font size as desired.
+                'responsive'   : true,  // This wheel is responsive!
+                'segments'     :        // Define segments including colour and text.
+                [
+                    {'fillStyle' : '#eae56f', 'text' : '50% Off'},
+                    {'fillStyle' : '#89f26e', 'text' : '20% Off'},
+                    {'fillStyle' : '#7de6ef', 'text' : 'Free Shipping'},
+                    {'fillStyle' : '#e7706f', 'text' : '50% Off'},
+                    {'fillStyle' : '#eae56f', 'text' : '20% Off'},
+                    {'fillStyle' : '#89f26e', 'text' : 'Free Shipping'},
+                    {'fillStyle' : '#7de6ef', 'text' : '50% Off'},
+                    {'fillStyle' : '#e7706f', 'text' : '20% Off'}
+                ],
+                'pins' :
+                {
+                    'outerRadius': 6,
+                    'responsive' : true, // This must be set to true if pin size is to be responsive, if not just location is.
+                },
+                'animation' :           // Specify the animation to use.
+                {
+                    'type'     : 'spinToStop',
+                    'duration' : 5,     // Duration in seconds.
+                    'spins'    : 8,     // Number of complete spins.
+                    'callbackFinished' : togglePopup
+                }
+            });
+
+            // -----------------------------------------------------------------
+            // Called by the onClick of the canvas, starts the spinning.
+            function startShow(){
+                if(canvas.style.visibility=='visible'){
+                    canvas.style.visibility='hidden';
+                    btn.style.visibility='visible';
+                }else{
+                    canvas.style.visibility='visible';
+                    btn.style.visibility='hidden';
+                }
+            }
+
+            function startSpin()
+            {
+                // if(canvas.style.visibility=='visible'){
+                //     canvas.style.visibility='hidden';
+                //     btn.style.visibility='visible';
+                // }else{
+                //     canvas.style.visibility='visible';
+                //     btn.style.visibility='hidden';
+                // }
+                // Stop any current animation.
+                theWheel.stopAnimation(false);
+
+                // Reset the rotation angle to less than or equal to 360 so spinning again
+                // works as expected. Setting to modulus (%) 360 keeps the current position.
+                theWheel.rotationAngle = theWheel.rotationAngle % 360;
+
+                // Start animation.
+                theWheel.startAnimation();
+            }
+            function togglePopup(indicatedSegment){
+                document.getElementById("popup-1").classList.toggle("active");
+                let name = indicatedSegment.text;
+                document.getElementById("name").innerHTML = name;
+
+            }
+        </script>
+    </body>
+</html>
